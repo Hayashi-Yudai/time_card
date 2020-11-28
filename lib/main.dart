@@ -14,13 +14,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Time Card'),
+      home: const MyHomePage(title: 'Time Card'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
 
@@ -31,7 +31,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var _datetime = new DateTime.now();
 
-  void _incrementCounter() {
+  void _updateDatetime() {
     setState(() {
       _datetime = DateTime.now();
     });
@@ -39,6 +39,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final hour = _datetime.hour.toString().padLeft(2, '0');
+    final minutes = _datetime.minute.toString().padLeft(2, '0');
+    final second = _datetime.second.toString().padLeft(2, '0');
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -47,15 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              '${_datetime.hour}:${_datetime.minute}:${_datetime.second}',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Timer(20, '$hour:$minutes:$second', context),
             ButtonTheme(
               minWidth: 200,
               height: 60,
               child: RaisedButton(
-                onPressed: _incrementCounter,
+                onPressed: _updateDatetime,
                 child: const Text('Enter the room',
                     style: TextStyle(fontSize: 18)),
                 highlightColor: Colors.blue,
@@ -68,4 +69,15 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+class Timer extends Container {
+  Timer(double margin, String text, BuildContext context)
+      : super(
+          margin: EdgeInsets.only(bottom: margin),
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.headline4,
+          ),
+        );
 }
