@@ -30,10 +30,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var _datetime = new DateTime.now();
+  bool isEntering = false;
 
   void _updateDatetime() {
     setState(() {
       _datetime = DateTime.now();
+      isEntering = !isEntering;
     });
   }
 
@@ -42,6 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final hour = _datetime.hour.toString().padLeft(2, '0');
     final minutes = _datetime.minute.toString().padLeft(2, '0');
     final second = _datetime.second.toString().padLeft(2, '0');
+
+    final buttonText = isEntering ? 'Exit the room' : 'Enter the room';
 
     return Scaffold(
       appBar: AppBar(
@@ -57,8 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 60,
               child: RaisedButton(
                 onPressed: _updateDatetime,
-                child: const Text('Enter the room',
-                    style: TextStyle(fontSize: 18)),
+                child: Text(buttonText, style: const TextStyle(fontSize: 18)),
                 highlightColor: Colors.blue,
                 color: Colors.blue[50],
                 elevation: 8,
