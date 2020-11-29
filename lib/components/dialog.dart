@@ -13,7 +13,7 @@ void openErrorDialog(BuildContext context, int statusCode) {
   showDialog<Widget>(
       context: context,
       builder: (BuildContext context) => SimpleDialog(
-            title: Text('$statusCode'),
+            title: Text('Error: $statusCode'),
             children: const [],
           ));
 }
