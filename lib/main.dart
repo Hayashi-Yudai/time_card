@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:timecard/components/timer.dart';
+import 'package:timecard/components/action_button.dart';
 
 void main() async {
   await DotEnv().load('.env');
@@ -109,12 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ButtonTheme(
               minWidth: 200,
               height: 60,
-              child: RaisedButton(
-                onPressed: _updateDatetime,
-                child: Text(buttonText, style: const TextStyle(fontSize: 18)),
-                highlightColor: Colors.blue,
-                color: Colors.blue[50],
-                elevation: 8,
+              child: ActionButton(
+                buttonText,
+                _updateDatetime,
               ),
             ),
           ],
@@ -122,15 +121,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-}
-
-class Timer extends Container {
-  Timer(double margin, String text, BuildContext context)
-      : super(
-          margin: EdgeInsets.only(bottom: margin),
-          child: Text(
-            text,
-            style: Theme.of(context).textTheme.headline4,
-          ),
-        );
 }
