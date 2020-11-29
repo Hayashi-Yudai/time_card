@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 import 'package:timecard/components/timer.dart';
 import 'package:timecard/components/action_button.dart';
-import 'package:timecard/components/dialog.dart';
+import 'package:timecard/request/post_gas.dart';
 
-void main() async {
+Future<void> main() async {
   await DotEnv().load('.env');
   runApp(MyApp());
 }
@@ -43,30 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final actionText = isEntering ? 'exit' : 'enter';
     final now = DateTime.now();
 
-    final year = now.year.toString();
-    final month = now.month.toString().padLeft(2, '0');
-    final day = now.day.toString().padLeft(2, '0');
-    final hour = now.hour.toString().padLeft(2, '0');
-    final minutes = now.minute.toString().padLeft(2, '0');
-
-    final gas = DotEnv().env['GAS_URL'];
-
-    final url = 'https://script.google.com/macros/s/$gas/exec';
-    http.post(url, body: {
-      'name': 'hayashi',
-      'date': '$year-$month-$day',
-      'time': '$hour:$minutes',
-      'action': '$actionText',
-    }).then((response) async {
-      if (response.statusCode == 302) {
-        openDialog(context);
-
-        await Future<void>.delayed(const Duration(seconds: 1));
-        Navigator.pop(context);
-      } else {
-        openErrorDialog(context, response.statusCode);
-      }
-    });
+    Request(now, 'hayashi', actionText).post(context);
 
     setState(() {
       _datetime = DateTime.now();
