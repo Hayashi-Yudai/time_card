@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:timecard/components/timer.dart';
 import 'package:timecard/components/action_button.dart';
+import 'package:timecard/components/dialog.dart';
 
 void main() async {
   await DotEnv().load('.env');
@@ -71,24 +72,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _datetime = DateTime.now();
       isEntering = !isEntering;
     });
-  }
-
-  void openDialog(BuildContext context) {
-    showDialog<Widget>(
-        context: context,
-        builder: (BuildContext context) => const SimpleDialog(
-              title: Text('OK'),
-              children: [],
-            ));
-  }
-
-  void openErrorDialog(BuildContext context, int statusCode) {
-    showDialog<Widget>(
-        context: context,
-        builder: (BuildContext context) => SimpleDialog(
-              title: Text('$statusCode'),
-              children: const [],
-            ));
   }
 
   @override
