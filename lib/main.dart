@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timecard/components/timer.dart';
 import 'package:timecard/components/action_button.dart';
 import 'package:timecard/request/post_gas.dart';
@@ -21,6 +22,10 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const MyHomePage(title: 'Time Card'),
+      routes: <String, WidgetBuilder>{
+        '/home': (BuildContext context) => const MyHomePage(),
+        '/setting': (BuildContext context) => InitSettingWindow(),
+      },
     );
   }
 }
@@ -38,15 +43,38 @@ class _MyHomePageState extends State<MyHomePage> {
   var _datetime = DateTime.now();
   bool isEntering = false;
 
-  void _updateDatetime() {
+  Future<void> _updateDatetime() async {
     final actionText = isEntering ? 'exit' : 'enter';
     final now = DateTime.now();
+    final pref = await SharedPreferences.getInstance();
 
     Request(now, 'hayashi', actionText).post(context);
+
+    await pref.setBool('isEntering', !isEntering);
 
     setState(() {
       _datetime = DateTime.now();
       isEntering = !isEntering;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future(() async {
+      final pref = await SharedPreferences.getInstance();
+
+      final entering = pref.getBool('isEntering');
+      final username = pref.getString('username');
+
+      if (username == null) {
+        await Navigator.of(context).pushNamed('/setting');
+      }
+
+      setState(() {
+        isEntering = entering ?? false;
+      });
     });
   }
 
@@ -59,9 +87,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final buttonText = isEntering ? 'Exit the room' : 'Enter the room';
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title), actions: <Widget>[
+        IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/setting');
+            })
+      ]),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -76,6 +108,42 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class InitSettingWindow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('User Setting'),
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(32),
+        child: Center(
+          child: Column(children: <Widget>[
+            TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'Enter your name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  )),
+              validator: (val) {
+                if (val.isEmpty) {
+                  return 'User name should not be empty';
+                }
+                return null;
+              },
+            ),
+            RaisedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Apply'),
+              color: Colors.blue[50],
+            ),
+          ]),
         ),
       ),
     );
