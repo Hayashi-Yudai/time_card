@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timecard/components/timer.dart';
 import 'package:timecard/components/action_button.dart';
 import 'package:timecard/request/post_gas.dart';
@@ -38,15 +39,32 @@ class _MyHomePageState extends State<MyHomePage> {
   var _datetime = DateTime.now();
   bool isEntering = false;
 
-  void _updateDatetime() {
+  Future<void> _updateDatetime() async {
     final actionText = isEntering ? 'exit' : 'enter';
     final now = DateTime.now();
+    final pref = await SharedPreferences.getInstance();
 
     Request(now, 'hayashi', actionText).post(context);
+
+    await pref.setBool('isEntering', !isEntering);
 
     setState(() {
       _datetime = DateTime.now();
       isEntering = !isEntering;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future(() async {
+      final pref = await SharedPreferences.getInstance();
+
+      final entering = pref.getBool('isEntering');
+      setState(() {
+        isEntering = entering ?? false;
+      });
     });
   }
 
