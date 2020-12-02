@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Time Card'),
       routes: <String, WidgetBuilder>{
         '/home': (BuildContext context) => const MyHomePage(),
-        '/setting': (BuildContext context) => InitSettingWindow(),
+        '/setting': (BuildContext context) => InitSettingForm(),
       },
     );
   }
@@ -48,7 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final now = DateTime.now();
     final pref = await SharedPreferences.getInstance();
 
-    Request(now, 'hayashi', actionText).post(context);
+    Request(now, pref.getString('username') ?? 'anonymous', actionText)
+        .post(context);
 
     await pref.setBool('isEntering', !isEntering);
 
@@ -114,7 +115,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class InitSettingWindow extends StatelessWidget {
+class InitSettingForm extends StatefulWidget {
+  @override
+  InitSettingFormState createState() {
+    return InitSettingFormState();
+  }
+}
+
+class InitSettingFormState extends State<InitSettingForm> {
+  final _formKey = GlobalKey<FormState>();
+  final controller = TextEditingController();
+
+  void setUserName(String username) {
+    if (_formKey.currentState.validate()) {
+      Future(() async {
+        final pref = await SharedPreferences.getInstance();
+        await pref.setString('username', username);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,13 +143,15 @@ class InitSettingWindow extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.all(32),
-        child: Center(
+        child: Form(
+          key: _formKey,
           child: Column(children: <Widget>[
             TextFormField(
+              controller: controller,
               decoration: InputDecoration(
                   labelText: 'Enter your name',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(0),
+                    borderRadius: BorderRadius.circular(10),
                   )),
               validator: (val) {
                 if (val.isEmpty) {
@@ -138,11 +160,10 @@ class InitSettingWindow extends StatelessWidget {
                 return null;
               },
             ),
-            RaisedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Apply'),
-              color: Colors.blue[50],
-            ),
+            ActionButton('Apply', () {
+              setUserName(controller.text);
+              Navigator.of(context).pop();
+            }),
           ]),
         ),
       ),
