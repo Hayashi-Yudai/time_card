@@ -1,0 +1,102 @@
+
+# main.yml
+name: github pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v1
+      with:
+        channel: 'beta'
+
+    - name: Install
+      run: |
+        flutter config --enable-web
+        flutter pub get
+
+    - name: Build
+      run: flutter build web
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v2.8.0
+      env:
+        ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        PUBLISH_BRANCH: gh-pages
+        PUBLISH_DIR: ./build/web
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+# main.yml
+name: github pages
+ 
+on:
+  push:
+    branches:
+      - master
+ 
+jobs:
+  build-deploy:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@master
+ 
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v1
+      with:
+        channel: 'beta'
+ 
+    - name: Install
+      run: |
+        flutter config --enable-web
+        flutter pub get
+ 
+    - name: Build
+      run: flutter build web
+ 
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v2.8.0
+      env:
+        ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        PUBLISH_BRANCH: master
+        PUBLISH_DIR: ./build/web
