@@ -25,11 +25,11 @@ class Request {
     };
   }
 
-  void post(BuildContext context) {
+  Future<void> post(BuildContext context) async {
     final gas = DotEnv().env['GAS_URL'];
 
     final url = 'https://script.google.com/macros/s/$gas/exec';
-    http.post(url, body: makeJson()).then((response) async {
+    await http.post(url, body: makeJson()).then((response) async {
       if (response.statusCode == 302) {
         openDialog(context);
 

@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final now = DateTime.now();
     final pref = await SharedPreferences.getInstance();
 
-    Request(now, pref.getString('username') ?? 'anonymous', actionText)
+    await Request(now, pref.getString('username') ?? 'anonymous', actionText)
         .post(context);
 
     await pref.setBool('isEntering', !isEntering);
