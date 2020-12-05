@@ -9,7 +9,7 @@ import 'package:timecard/request/post_gas.dart';
 Future<void> main() async {
   try {
     await DotEnv().load('.env');
-  } catch (e) {}
+  } on Exception catch (_) {}
   runApp(MyApp());
 }
 
