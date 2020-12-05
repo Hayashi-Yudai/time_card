@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -33,7 +31,8 @@ class Request {
     try {
       gas = DotEnv().env['GAS_URL'];
     } on Exception catch (_) {
-      gas = Platform.environment['GAS_URL'];
+      gas = const String.fromEnvironment(
+          'GAS_URL'); // Platform.environment['GAS_URL'];
     }
 
     final url = 'https://script.google.com/macros/s/$gas/exec';
