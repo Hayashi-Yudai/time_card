@@ -7,7 +7,9 @@ import 'package:timecard/components/action_button.dart';
 import 'package:timecard/request/post_gas.dart';
 
 Future<void> main() async {
-  await DotEnv().load('.env');
+  try {
+    await DotEnv().load('.env');
+  } catch (e) {}
   runApp(MyApp());
 }
 

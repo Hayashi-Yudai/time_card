@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -26,7 +28,13 @@ class Request {
   }
 
   Future<void> post(BuildContext context) async {
-    final gas = DotEnv().env['GAS_URL'];
+    String gas;
+
+    try {
+      gas = DotEnv().env['GAS_URL'];
+    } on Exception catch (_) {
+      gas = Platform.environment['GAS_URL'];
+    }
 
     final url = 'https://script.google.com/macros/s/$gas/exec';
     await http.post(url, body: makeJson()).then((response) async {
