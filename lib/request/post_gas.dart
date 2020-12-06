@@ -37,7 +37,7 @@ class Request {
 
     final url = 'https://script.google.com/macros/s/$gas/exec';
     await http.post(url, body: makeJson()).then((response) async {
-      if (response.statusCode == 302) {
+      if (response.statusCode == 302 || response.statusCode == 200) {
         openDialog(context);
 
         await Future<void>.delayed(const Duration(seconds: 1));
