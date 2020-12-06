@@ -128,6 +128,19 @@ class InitSettingFormState extends State<InitSettingForm> {
   final _formKey = GlobalKey<FormState>();
   final controller = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+
+    Future(() async {
+      final pref = await SharedPreferences.getInstance();
+
+      setState(() {
+        controller.text = pref.getString('username');
+      });
+    });
+  }
+
   void setUserName(String username) {
     if (_formKey.currentState.validate()) {
       Future(() async {
